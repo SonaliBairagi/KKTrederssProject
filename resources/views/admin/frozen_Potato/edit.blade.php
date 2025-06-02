@@ -1,0 +1,124 @@
+@extends('admin.layout.master')
+
+@section('content')
+
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="bg-light rounded p-4 shadow-sm">
+                <h5 class="mb-4">Edit Product</h5>
+
+                <form id="ckeditor" action="{{ route('admin.frozenPotato.update', $frozenpotato->id) }}" method="POST" enctype="multipart/form-data">
+
+                    @csrf
+                    @method('PUT')
+
+                    <!-- Product No Field -->
+                    <div class="mb-3 row">
+                        <label for="Pproduct_no" class="col-sm-3 col-form-label">Product No</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="Pproduct_no" class="form-control" id="Pproduct_no"
+                                value="{{ old('Pproduct_no', $frozenpotato->Pproduct_no) }}" required>
+                        </div>
+                    </div>
+
+                    <!-- Name Field -->
+                    <div class="mb-3 row">
+                        <label for="Pproduct_name" class="col-sm-3 col-form-label">Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="Pproduct_name" class="form-control" id="Pproduct_name"
+                                value="{{ old('Pproduct_name', $frozenpotato->Pproduct_name) }}" required>
+                        </div>
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="mb-3 row">
+                        <label for="Pproduct_description" class="col-sm-3 col-form-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea name="Pproduct_description" class="form-control" id="Pproduct_description"
+                                rows="3" required>{{ old('Pproduct_description', $frozenpotato->Pproduct_description) }}</textarea>
+                        </div>
+                    </div>
+
+
+                    <!-- Image Upload -->
+                    <div class="mb-3 row">
+                        <label for="Pproduct_img" class="col-sm-3 col-form-label">Image</label>
+                        <div class="col-sm-9">
+                            <input type="file" name="Pproduct_img" class="form-control" id="Pproduct_img" accept="image/*">
+                            @if($frozenpotato->Pproduct_img)
+                            <img src="{{ asset('PotatoProducts/'.$frozenpotato->Pproduct_img) }}" alt="Current Image" width="120" class="mt-2 rounded">
+                            @endif
+                        </div>
+                    </div>
+
+
+                    <!-- Submit Button -->
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary px-4">Update</button>
+                    </div>
+                </form>
+
+                @error('Pproduct_no')
+                <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+
+                @error('Pproduct_name')
+                <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+
+                @error('Pproduct_description')
+                <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+
+                @error('Pproduct_img')
+                <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Form End -->
+
+@endsection
+
+
+@section('scripts')
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script>
+    const editors = {};
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Select all textarea elements
+        document.querySelectorAll('textarea').forEach((textarea) => {
+            ClassicEditor
+                .create(textarea)
+                .then(editor => {
+                    editors[textarea.name] = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+
+        // Sync editor content on form submit
+        document.querySelector('#ckeditor').addEventListener('submit', function(e) {
+            for (const name in editors) {
+                const editor = editors[name];
+                const textarea = document.querySelector(`[name="${name}"]`);
+                if (textarea) {
+                    textarea.value = editor.getData();
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+    .ck-editor__editable {
+        min-height: 200px;
+    }
+</style>
+@endsection
